@@ -1,6 +1,7 @@
 import streamlit as st
 import yfinance as yf
 import numpy as np
+import plotly.graph_objects as go
 
 
 # =========================================================
@@ -313,3 +314,86 @@ with col4:
         label="Trend",
         value=trend
     )
+
+# =========================================================
+# 10. INTERACTIVE PERFORMANCE CHART
+# =========================================================
+
+st.markdown(
+    """
+    <div class="section-title">
+        Performance
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Convert price history into cumulative performance
+performance = (
+    (prices / prices.iloc[0]) - 1
+) * 100
+
+
+# Create interactive chart
+fig = go.Figure()
+
+
+fig.add_trace(
+    go.Scatter(
+        x=prices.index,
+        y=performance,
+        mode="lines",
+        name=stock,
+        line=dict(
+            color="#5F9F82",
+            width=3
+        ),
+
+        customdata=prices,
+
+        hovertemplate=
+            "<b>%{x|%b %d, %Y}</b><br>"
+            "Price: $%{customdata:.2f}<br>"
+            "Return: %{y:+.1f}%"
+            "<extra></extra>"
+    )
+)
+
+
+fig.update_layout(
+
+    height=480,
+
+    margin=dict(
+        l=20,
+        r=20,
+        t=30,
+        b=20
+    ),
+
+    paper_bgcolor="#F6F9F7",
+
+    plot_bgcolor="#FFFFFF",
+
+    hovermode="x",
+
+    showlegend=False,
+
+    xaxis=dict(
+        title="",
+        showgrid=False
+    ),
+
+    yaxis=dict(
+        title="Return since start (%)",
+        gridcolor="#E7ECE9",
+        zeroline=True,
+        zerolinecolor="#BDD7CC"
+    )
+)
+
+
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)

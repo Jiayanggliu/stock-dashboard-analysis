@@ -264,30 +264,14 @@ else:
 # =========================================================
 
 st.markdown(
-    f"""
-    <div style="
-        margin-top: 32px;
-        margin-bottom: 20px;
-    ">
-
-        <span style="
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #24312D;
-        ">
-            {stock}
-        </span>
-
-        <span style="
-            font-size: 1.05rem;
-            color: #7B8984;
-            margin-left: 12px;
-        ">
-            ${latest_price:,.2f}
-        </span>
-
-    </div>
-    """,
+    f'<div style="margin-top:32px; margin-bottom:20px;">'
+    f'<span style="font-size:1.8rem; font-weight:700; color:#24312D;">'
+    f'{stock}'
+    f'</span>'
+    f'<span style="font-size:1.05rem; color:#7B8984; margin-left:12px;">'
+    f'${latest_price:,.2f}'
+    f'</span>'
+    f'</div>',
     unsafe_allow_html=True
 )
 

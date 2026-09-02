@@ -272,15 +272,28 @@ else:
 # COMPANY BASICS
 # =========================================================
 
+# P/E Ratio
 pe_ratio = company_info.get("trailingPE")
 
+
+# Market Cap
 market_cap = company_info.get("marketCap")
 
-average_volume = company_info.get("averageVolume")
 
-week_52_low = company_info.get("fiftyTwoWeekLow")
+# Average Daily Volume
+average_volume = (
+    stock_data["Volume"]
+    .tail(30)
+    .mean()
+)
 
-week_52_high = company_info.get("fiftyTwoWeekHigh")
+
+# 52-week price range
+prices_52w = prices.tail(252)
+
+week_52_low = prices_52w.min()
+
+week_52_high = prices_52w.max()
 
 def format_large_number(value):
 

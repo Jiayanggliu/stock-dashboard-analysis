@@ -113,6 +113,13 @@ def load_stock_data(ticker):
 
     return stock_data
 
+@st.cache_data(ttl=3600)
+def load_company_info(ticker):
+
+    company = yf.Ticker(ticker)
+
+    return company.get_info()
+
 
 # =========================================================
 # 4. HERO SECTION
@@ -180,6 +187,8 @@ stock = st.selectbox(
 # =========================================================
 
 stock_data = load_stock_data(stock)
+
+company_info = load_company_info(stock)
 
 
 if stock_data.empty:
@@ -258,6 +267,71 @@ if ma_20.iloc[-1] > ma_200.iloc[-1]:
 else:
 
     trend = "Cautious ↓"
+
+# =========================================================
+# COMPANY BASICS
+# =========================================================
+
+pe_ratio = company_info.get("trailingPE")
+
+market_cap = company_info.get("marketCap")
+
+average_volume = company_info.get("averageVolume")
+
+week_52_low = company_info.get("fiftyTwoWeekLow")
+
+week_52_high = company_info.get("fiftyTwoWeekHigh")
+
+def format_large_number(value):
+
+    if value is None:
+        return "N/A"
+
+    if value >= 1_000_000_000_000:
+        return f"${value / 1_000_000_000_000:.2f}T"
+
+    elif value >= 1_000_000_000:
+        return f"${value / 1_000_000_000:.1f}B"
+
+    elif value >= 1_000_000:
+        return f"${value / 1_000_000:.1f}M"
+
+    else:
+        return f"${value:,.0f}"
+
+def format_volume(value):
+
+    if value is None:
+        return "N/A"
+
+    if value >= 1_000_000:
+        return f"{value / 1_000_000:.1f}M"
+
+    elif value >= 1_000:
+        return f"{value / 1_000:.1f}K"
+
+    else:
+        return f"{value:,.0f}"
+
+if pe_ratio is not None:
+    pe_display = f"{pe_ratio:.1f}x"
+else:
+    pe_display = "N/A"
+
+if (
+    week_52_low is not None
+    and week_52_high is not None
+    and week_52_high != week_52_low
+):
+
+    week_52_position = (
+        (latest_price - week_52_low)
+        / (week_52_high - week_52_low)
+    ) * 100
+
+else:
+
+    week_52_position = None
 
 
 # =========================================================
@@ -547,6 +621,186 @@ insight = (
     f"**{risk_text}**. Based on its moving averages, "
     f"{trend_text}."
 )
+
+# =========================================================
+# 12. BEYOND THE PRICE
+# =========================================================
+
+st.markdown(
+    """
+    <div class="section-title">
+        Beyond the price
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.caption(
+    "A few numbers finance apps often show — "
+    "explained in plain English."
+)
+
+
+b1, b2, b3, b4 = st.columns(4)
+
+
+# -------------------------
+# P/E Ratio
+# -------------------------
+
+with b1:
+
+    st.caption("Price vs. earnings")
+
+    st.metric(
+        label="P/E Ratio",
+        value=pe_display
+    )
+
+    with st.popover("ⓘ Why does this matter?"):
+
+        st.markdown("""
+        **In plain English**
+
+        P/E compares a company's stock price with
+        the earnings it generates.
+
+        A P/E of `30x` roughly means investors are
+        paying $30 for every $1 of annual earnings.
+
+        **Important context**
+
+        A higher P/E does **not** automatically mean
+        a stock is expensive.
+
+        A lower P/E does **not** automatically mean
+        a stock is cheap.
+
+        Different industries and companies can have
+        very different typical P/E ratios.
+
+        **Finance term**
+
+        P/E stands for **Price-to-Earnings Ratio**.
+        """)
+
+
+# -------------------------
+# Market Cap
+# -------------------------
+
+with b2:
+
+    st.caption("Company size")
+
+    st.metric(
+        label="Market Cap",
+        value=format_large_number(market_cap)
+    )
+
+    with st.popover("ⓘ Why does this matter?"):
+
+        st.markdown("""
+        **In plain English**
+
+        Market cap is the total market value of
+        a company's shares.
+
+        It is approximately:
+
+        `Share Price × Shares Outstanding`
+
+        **How to read it**
+
+        Market cap helps describe how large a
+        publicly traded company is.
+
+        It does **not** tell you whether the company
+        is a good investment.
+        """)
+
+
+# -------------------------
+# Average Volume
+# -------------------------
+
+with b3:
+
+    st.caption("Trading activity")
+
+    st.metric(
+        label="Avg. Daily Volume",
+        value=format_volume(average_volume)
+    )
+
+    with st.popover("ⓘ Why does this matter?"):
+
+        st.markdown("""
+        **In plain English**
+
+        Volume tells you how many shares change hands.
+
+        Higher average volume usually means the stock
+        is traded more actively.
+
+        **Important context**
+
+        High volume does not automatically mean
+        investors are bullish.
+
+        Every completed trade has both a buyer
+        and a seller.
+
+        Volume describes **activity**, not whether
+        the stock is good or bad.
+        """)
+
+
+# -------------------------
+# 52-Week Position
+# -------------------------
+
+with b4:
+
+    st.caption("Where is it now?")
+
+    if week_52_position is not None:
+
+        st.metric(
+            label="52-Week Position",
+            value=f"{week_52_position:.0f}%"
+        )
+
+    else:
+
+        st.metric(
+            label="52-Week Position",
+            value="N/A"
+        )
+
+    with st.popover("ⓘ Why does this matter?"):
+
+        st.markdown("""
+        **In plain English**
+
+        This shows where today's price sits between
+        the stock's lowest and highest prices during
+        the past 52 weeks.
+
+        `0%` ≈ near the 52-week low
+
+        `100%` ≈ near the 52-week high
+
+        **Important context**
+
+        Being near a high does not automatically mean
+        a stock is overpriced.
+
+        Being near a low does not automatically mean
+        it is a bargain.
+
+        This metric gives **context**, not a recommendation.
+        """)
 
 
 

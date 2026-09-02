@@ -120,6 +120,21 @@ def load_company_info(ticker):
 
     return company.get_info()
 
+@st.cache_data(ttl=3600)
+def load_valuation_data(ticker):
+
+    try:
+        company = yf.Ticker(ticker)
+
+        valuation = company.get_valuation_measures(
+            periods=0
+        )
+
+        return valuation
+
+    except:
+        return None
+
 
 # =========================================================
 # 4. HERO SECTION
@@ -189,6 +204,8 @@ stock = st.selectbox(
 stock_data = load_stock_data(stock)
 
 company_info = load_company_info(stock)
+
+valuation_data = load_valuation_data(stock)
 
 
 if stock_data.empty:
@@ -273,11 +290,29 @@ else:
 # =========================================================
 
 # P/E Ratio
-pe_ratio = company_info.get("trailingPE")
+pe_ratio = None
+
+if valuation_data is not None:
+
+    try:
+        pe_ratio = valuation_data.loc[
+            "Trailing P/E",
+            "Current"
+        ]
+
+    except:
+        pe_ratio = None
 
 
 # Market Cap
 market_cap = company_info.get("marketCap")
+
+if market_cap is None:
+    try:
+        fast_info = yf.Ticker(stock).fast_info
+        market_cap = fast_info["market_cap"]
+    except:
+        market_cap = None
 
 
 # Average Daily Volume

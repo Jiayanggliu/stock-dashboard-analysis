@@ -1,12 +1,5 @@
 import streamlit as st
 
-st.title("Retail Investor Stock Dashboard")
-
-st.write(
-  "An interactive dashboard for comparing stock performance,"
-  "momentum, volatility, and trent."
-)
-
 # -------------------------
 # Page setup
 # -------------------------
@@ -104,7 +97,6 @@ with right:
         unsafe_allow_html=True
     )
 
-st.markdown("---")
 
 # -------------------------
 # Stock selector

@@ -397,3 +397,49 @@ st.plotly_chart(
     fig,
     use_container_width=True
 )
+
+# =========================================================
+# 11. PLAIN-ENGLISH INSIGHT
+# =========================================================
+
+if momentum_30d > 5:
+    momentum_text = "strong positive momentum"
+elif momentum_30d > 0:
+    momentum_text = "mild positive momentum"
+elif momentum_30d > -5:
+    momentum_text = "mild negative momentum"
+else:
+    momentum_text = "weak recent momentum"
+
+
+if annual_volatility < 25:
+    risk_text = "relatively low volatility"
+elif annual_volatility < 40:
+    risk_text = "moderate volatility"
+else:
+    risk_text = "high volatility"
+
+
+if trend == "Positive ↑":
+    trend_text = "the short-term trend is above the long-term trend"
+else:
+    trend_text = "the short-term trend is below the long-term trend"
+
+
+insight = (
+    f"{stock} currently shows **{momentum_text}**, with "
+    f"**{risk_text}**. Based on its moving averages, "
+    f"{trend_text}."
+)
+
+
+st.markdown(
+    """
+    <div class="section-title">
+        What this means
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.info(insight)

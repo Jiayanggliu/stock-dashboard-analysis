@@ -278,42 +278,158 @@ st.markdown(
 
 
 # =========================================================
-# 9. KPI CARDS
+# 9. KPI CARDS — BEGINNER FRIENDLY
 # =========================================================
 
 col1, col2, col3, col4 = st.columns(4)
 
 
+# -------------------------
+# 2-Year Return
+# -------------------------
+
 with col1:
+
+    st.caption("Where did it end up?")
 
     st.metric(
         label="2-Year Return",
         value=f"{two_year_return:+.1f}%"
     )
 
+    with st.popover("ⓘ What does this mean?"):
+
+        st.markdown("""
+        **In plain English**
+
+        This tells you how much the stock's price changed
+        over the last two years.
+
+        **How to read it**
+
+        - `+20%` → the stock is worth about 20% more
+        - `-20%` → the stock is worth about 20% less
+
+        **Finance term**
+
+        This is called **cumulative return**.
+
+        Return tells you where the stock ended up —
+        but not how smooth or painful the journey was.
+        """)
+
+
+# -------------------------
+# 30-Day Momentum
+# -------------------------
 
 with col2:
+
+    st.caption("What's happening lately?")
 
     st.metric(
         label="30-Day Momentum",
         value=f"{momentum_30d:+.1f}%"
     )
 
+    with st.popover("ⓘ What does this mean?"):
+
+        st.markdown("""
+        **In plain English**
+
+        This looks at whether the stock has been moving
+        up or down recently.
+
+        **How to read it**
+
+        - Positive → recent price movement is upward
+        - Negative → recent price movement is downward
+
+        **Finance term**
+
+        This idea is called **momentum**.
+
+        Momentum describes recent direction.
+        It does **not** guarantee what happens next.
+        """)
+
+
+# -------------------------
+# Annual Volatility
+# -------------------------
 
 with col3:
+
+    st.caption("How bumpy was the ride?")
 
     st.metric(
         label="Annual Volatility",
         value=f"{annual_volatility:.1f}%"
     )
 
+    with st.popover("ⓘ What does this mean?"):
+
+        st.markdown("""
+        **In plain English**
+
+        Volatility tells you how dramatically the stock
+        tends to move around.
+
+        **How to read it**
+
+        Higher volatility → bigger price swings
+
+        Lower volatility → a smoother ride
+
+        **Finance term**
+
+        Volatility is based on the **standard deviation
+        of returns**.
+
+        Two stocks can have similar returns but feel
+        completely different to own because one may
+        fluctuate much more.
+        """)
+
+
+# -------------------------
+# Trend
+# -------------------------
 
 with col4:
+
+    st.caption("Which direction looks stronger?")
 
     st.metric(
         label="Trend",
         value=trend
     )
+
+    with st.popover("ⓘ What does this mean?"):
+
+        st.markdown("""
+        **In plain English**
+
+        We compare the stock's recent average price
+        with its longer-term average price.
+
+        **Positive ↑**
+
+        The 20-day moving average is above the
+        200-day moving average.
+
+        **Cautious ↓**
+
+        The short-term average is below the
+        long-term average.
+
+        **Finance term**
+
+        These are called **moving averages**.
+
+        They help smooth noisy daily prices so the
+        broader direction becomes easier to see.
+        """)
 
 # =========================================================
 # 10. INTERACTIVE PERFORMANCE CHART
@@ -433,13 +549,4 @@ insight = (
 )
 
 
-st.markdown(
-    """
-    <div class="section-title">
-        What this means
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
-st.info(insight)
